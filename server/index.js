@@ -40,7 +40,7 @@ db.on("disconnected", () => {
 });
 
 // ROUTES
-app.use("/user", userRouter);
+app.use("/auth", userRouter);
 app.use("/event", eventRouter);
 
 app.get("/", (req, res)=>{

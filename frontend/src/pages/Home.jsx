@@ -10,7 +10,6 @@ import NoItems from "../components/NoItems";
 import { motion, AnimatePresence } from "framer-motion";
 import HomeItem from "../components/HomeItem";
 import useLocationStore from "../store/useLocation"
-import Locator from "../components/Locator/Locator";
 
 export default function Home({ setProgress }) {
 
@@ -64,7 +63,7 @@ export default function Home({ setProgress }) {
     const URL = `${import.meta.env.VITE_BASE_URI}/event/${q ? `?q=${q}` : ""}${queryUrl ? queryUrl + '&' : '?'}page=${page}&limit=${limit}`;
     try {
       const response = await axios.get(URL);
-      setevents(prevevents => [...prevevents, ...response.data.products]);
+      setevents(prevevents => [...prevevents, ...response.data.events]);
       setTotalPages(response.data.totalPages);
       setCurrentPage(response.data.currentPage);
       setLoading(false);
@@ -104,16 +103,6 @@ export default function Home({ setProgress }) {
 
   return (
     <>
-      <div className="md:hidden flex-col flex">
-        <div className="w-full mt-4">
-          <Locator initialValue={region} selectRegion={selectRegion} placeholder={"Ads in Pakistan"} />
-        </div>
-        {events && events.length > 0 && (
-          <h2 className="mt-4 text-lg font-medium">
-          Recently Uploaded
-        </h2>
-        )}
-      </div>
       {events.length > 0 ? (
         <AnimatePresence mode="wait">
           <motion.div
@@ -123,8 +112,8 @@ export default function Home({ setProgress }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {events.map((place) => (
-              <HomeItem place={place} key={place._id} />
+            {events.map((event) => (
+              <HomeItem event={event} key={event._id} />
             ))}
           </motion.div>
         </AnimatePresence>
@@ -173,7 +162,7 @@ export default function Home({ setProgress }) {
           <div className="flex justify-center mt-4">
             <button
               className="bg-gray-800 text-white px-4 py-2 rounded-md"
-              onClick={() => {setProgress(50); debouncedFetchAds(currentPage + 1)}}
+              onClick={() => {setProgress(50); debouncedFetchEvents(currentPage + 1)}}
             >
               Load More
             </button>
@@ -183,11 +172,10 @@ export default function Home({ setProgress }) {
       {
         !loading && events.length > 0 && currentPage === totalPages && (
           <div className="flex justify-center mt-4">
-            <p className="text-gray-800">No more ads to load</p>
+            <p className="text-gray-800">No more events to show</p>
           </div>
         )
       }
-
     </>
   );
 }

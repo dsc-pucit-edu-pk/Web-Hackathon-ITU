@@ -1,14 +1,19 @@
 import { query } from "express";
 import EventModel from "../models/Event.js";
 import { catchError } from "../utils/catchError.js";
+import makeImage from "../utils/makeImage.js";
 
 // Create
 const createEvent = catchError(async (req, res) => {
   req.body.date = new Date(req.body.date);
   req.body.creatorId = req.userId;
-  console.log(req.userId)
+
+  const post = await makeImage({
+    title: req.body.title,
+    description: req.body.description,
+  });
   const event = await EventModel.create(req.body);
-  res.status(201).json(event);
+  res.status(201).json(post);
 });
 
 // Read
@@ -137,19 +142,20 @@ const queryEvents = catchError(async (req, res) => {
 const addUserToEvent = catchError(async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
-
-  const [event] = await Promise.all([
-    EventModel.findOneAndUpdate(
-      { _id: id },
-      { $addToSet: { participants: userId } },
-      { new: true }
-    ),
-  ]);
-
-  if (!event) {
+  const event = await EventModel.findById(id);
+  if(!event || event.status !== 'active') {
     return res.status(404).send("Competition not found");
   }
-  res.status(200).json({ event });
+
+  if (event.participants.includes(userId)) {
+    return res.status(400).send("User already in event");
+  } else if(event.max_participants <= event.current_participants) {
+    event.participants.push(userId);
+    event.current_participants += 1;
+    await event.save();
+  } else {
+    return res.status(400).send("Event is full");
+  }
 });
 
 export {

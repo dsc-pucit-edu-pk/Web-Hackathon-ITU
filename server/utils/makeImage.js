@@ -2,21 +2,28 @@ import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
 import template from './template.js';
 import imgbbUploader from 'imgbb-uploader';
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
+
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 async function makeImage(data) {
+    const imagePath = path.join(__dirname, "..", "posts", `image.jpg`)
+
     await nodeHtmlToImage({
-        output: 'image.jpg',
+        output: imagePath,
         type: 'jpeg',
         height: 1500,
         width: 1500,
         quality: 100,
         html: template(data)
-      })
-    .then(() => console.log('The image was created successfully!'))
+    })
 
     const API_KEY = process.env.IMGBB_API_KEY;
-    const imagePath = path.join(__dirname, 'image.jpg');
 
     const url = await imgbbUploader(API_KEY, imagePath)
     .then((response) => {
@@ -27,4 +34,4 @@ async function makeImage(data) {
     return url;
 }
 
-module.exports = makeImage;
+export default makeImage;
