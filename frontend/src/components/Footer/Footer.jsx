@@ -21,15 +21,15 @@ className={Styles.footerCont}
             <h3>Support</h3>
           </div>
           <p style={{ color: "grey" }}>
-            Office H3 DHA Lahore
+            Eventify.
           </p>
           <p>0049-293023</p>
           <a href="mailto:itumun@itu.edu.pk">
-            <p>support@bidbazar.pk</p>
+            <p>support@eventify.pk</p>
           </a>
         </div>
 
-        <div className={Styles.footermenu}>
+        {/* <div className={Styles.footermenu}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <MdKeyboardArrowRight
               style={{ fontSize: "25px", color: "black", marginRight: "6px" }}
@@ -37,7 +37,7 @@ className={Styles.footerCont}
             <h3>Popular Categories</h3>
           </div>
           <Link className={Styles.Link} to={"/listings/property-for-rent/"}>
-            Property for rent
+            Tag
           </Link>
           <Link className={Styles.Link} to={"/listings/mobile-phones/"}>
             Mobile Phones
@@ -48,7 +48,7 @@ className={Styles.footerCont}
           <Link className={Styles.Link} to={"/listings/electronics/computer-and-accessories/"}>
             Computers
           </Link>
-        </div>
+        </div> */}
         <div className={Styles.footerposts}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <BiBookOpen
@@ -59,7 +59,7 @@ className={Styles.footerCont}
                 cursor: "pointer",
               }}
             />
-            <h3>BidBazar blogs</h3>
+            <h3>Eventify blogs</h3>
           </div>
           <p>Blogs posts coming soon!</p>
         </div>
@@ -67,7 +67,6 @@ className={Styles.footerCont}
         <div className={Styles.footericons}>
           <div style={{ display: "flex", alignItems: "center" }}>
             {/* <a
-              href="https://www.instagram.com/itumunsociety"
               rel="noreferrer"
               target={"blank"}
             >
@@ -78,7 +77,6 @@ className={Styles.footerCont}
             {/* <h3> Instagram</h3> */}
           </div>
           <a
-            href="https://www.instagram.com/bidbazarpk"
             rel="noreferrer"
             target={"blank"}
           >
@@ -90,7 +88,7 @@ className={Styles.footerCont}
         <div className={Styles.footercopyright}>
           <span style={{ display: "flex", alignItems: "center" }}>
             <FaCopyright />
-            <p>BIDBAZAR PK 2023 - All rights reserved</p>
+            <p>Eventify 2023 - All rights reserved</p>
           </span>
           <a
             style={{ marginLeft: "-1px" }}
@@ -98,7 +96,7 @@ className={Styles.footerCont}
             target={"_blank"}
             href="https://www.linkedin.com"
           >
-            BidBazar PVT LTD
+            Eventify PVT LTD
           </a>
         </div>
       </div>

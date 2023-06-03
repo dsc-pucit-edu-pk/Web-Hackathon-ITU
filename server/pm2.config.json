@@ -10,8 +10,15 @@
         }
       },
       {
-        "name": "Jobs",
+        "name": "Expire",
         "script": "./jobs/expire.js",
+        "env": {
+          "NODE_ENV": "production"
+        }
+      },
+      {
+        "name": "Send Email",
+        "script": "./jobs/email.js",
         "env": {
           "NODE_ENV": "production"
         }

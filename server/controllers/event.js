@@ -3,23 +3,9 @@ import { catchError } from "../utils/catchError.js";
 import mongoose from "mongoose";
 const createEvent = catchError(async (req, res) => {
   try {
-    const id = req.userId;
-    const {
-      title,
-      description,
-      date,
-      status,
-      location,
-      recurring,
-      images,
-      max_participants,
-      current_participants,
-      category,
-      tags,
-      participants,
-    } = req.body;
-
-    const event = await EventModel.create({
+     const id = req.userId;
+     const {title, description, date, status, location, recurring, images, max_participants, current_participants, category, tags, participants } = req.body;
+     const event = await EventModel.create({
       title,
       description,
       date,
@@ -56,21 +42,18 @@ const getEvents = catchError(async (req, res) => {
       $or: [
         { title: { $regex: searchQuery, $options: "i" } },
         { description: { $regex: searchQuery, $options: "i" } },
-        { category: category },
-        { tags: tags },
       ],
     };
   }
 
-  if (req.query && req.query.region) {
+  if (req.query && req.query.region && req.query.region !== "Pakistan") {
     query = {
       ...query,
-      address: { $regex: req.query.region, $options: "i" },
+      location: { $regex: req.query.region, $options: "i" },
     };
   }
 
-  console.log(query);
-  try {
+try {
     if (!query || query === "") {
       events = await EventModel.find({ status: "active" })
         .sort({ createdAt: -1 })
@@ -165,17 +148,24 @@ const queryEvents = catchError(async (req, res) => {
 const addUserToEvent = catchError(async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
-  const event = await EventModel.findById(id);
-  if (!event || event.status !== "active") {
-    return res.status(404).send("Competition not found");
+  if (!userId) {
+    res.status(400).json("No user found")
   }
-
+  const event = await EventModel.findById(id);
+  if (!event) {
+    return res.status(400).send("Competition not found");
+  }
+  
   if (event.participants.includes(userId)) {
-    return res.status(400).send("User already in event");
-  } else if (event.max_participants <= event.current_participants) {
-    event.participants.push(userId);
-    event.current_participants += 1;
-    await event.save();
+    res.status(400).send("User already in event");
+  } else if (event.max_participants >= event.current_participants) {
+    const event = await EventModel.findByIdAndUpdate(
+      id,
+      { $push: { participants: userId }, $inc: { current_participants: 1 } },
+      { new: true }
+    );
+    
+    res.json(event);
   } else {
     return res.status(400).send("Event is full");
   }
