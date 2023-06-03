@@ -83,11 +83,3 @@ export const getUser = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-
-export const addWishlist = catchError(async (req, res) => {
-  const { id } = req.params;
-  const user = await UserModel.findById(req.userId);
-  user.wishlist.push(id);
-  await user.save();
-  res.status(200).json(user);
-});
