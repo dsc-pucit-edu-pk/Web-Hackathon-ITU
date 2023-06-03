@@ -1,11 +1,26 @@
 import EventModel from "../models/Event.js";
+import NotificationModel from "../models/Notification.js";
 import { catchError } from "../utils/catchError.js";
 import mongoose from "mongoose";
+
 const createEvent = catchError(async (req, res) => {
   try {
-     const id = req.userId;
-     const {title, description, date, status, location, recurring, images, max_participants, current_participants, category, tags, participants } = req.body;
-     const event = await EventModel.create({
+    const id = req.userId;
+    const {
+      title,
+      description,
+      date,
+      status,
+      location,
+      recurring,
+      images,
+      max_participants,
+      current_participants,
+      category,
+      tags,
+      participants,
+    } = req.body;
+    const event = await EventModel.create({
       title,
       description,
       date,
@@ -19,6 +34,21 @@ const createEvent = catchError(async (req, res) => {
       category,
       tags,
     });
+
+    const index = Math.floor(Math.random() * tags.length);
+    const users = await UserModel.find({ tags: tags[index] });
+
+    for (const user of users) {
+      const recipientId = user._id;
+      const message = `<p>A new event has been created that matches your interests. Check it out here: <a href="eventor.com/event/${event._id}">eventor.com/event/${event._id}</a></p>`;
+
+      await NotificationModel.create({
+        message,
+        recipientId,
+        eventId: event._id,
+      });
+    }
+
     res.json(event);
   } catch (error) {
     res.json(error);
@@ -53,7 +83,7 @@ const getEvents = catchError(async (req, res) => {
     };
   }
 
-try {
+  try {
     if (!query || query === "") {
       events = await EventModel.find({ status: "active" })
         .sort({ createdAt: -1 })
@@ -155,7 +185,7 @@ const addUserToEvent = catchError(async (req, res) => {
   if (!event) {
     return res.status(400).send("Competition not found");
   }
-  
+
   if (event.participants.includes(userId)) {
     res.status(400).send("User already in event");
     return;
@@ -165,7 +195,7 @@ const addUserToEvent = catchError(async (req, res) => {
       { $push: { participants: userId }, $inc: { current_participants: 1 } },
       { new: true }
     );
-    
+
     res.json(event);
   } else {
     return res.status(400).send("Event is full");
