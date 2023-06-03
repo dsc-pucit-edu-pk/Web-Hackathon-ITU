@@ -1,4 +1,5 @@
 import Notification from "../models/Notification.js";
+import mongoose from "mongoose";
 
 // Get all notifications for a user
 
@@ -33,8 +34,11 @@ export const markRead = async (req, res) => {
 
 export const sendNotification = async (req, res) => {
   const { recipientId, message } = req.body;
+console.log(req.body)
+  console.log(recipientId, message)
+
   await Notification.create({
-    recipientId,
+    recipientId: mongoose.Types.ObjectId(recipientId),
     message,
   });
   res.status(200).json({ message: "Notification sent" });
