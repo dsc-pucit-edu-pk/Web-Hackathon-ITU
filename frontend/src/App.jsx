@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Layout from './Layout';
 import { useState } from 'react';
 import LoadingBar from 'react-top-loading-bar';
+import AddEventForm from './pages/AddEventForm';
 
 const App = () => {
 
@@ -21,6 +22,7 @@ const App = () => {
         <Route path="/" element={<Home  setProgress={setProgress}/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path='/create' element={<AddEventForm />} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Route>
     </Routes>

@@ -22,7 +22,7 @@ const Layout = () => {
 
      useEffect(() => {
         if (user && socket) {
-            socket.emit("addUser", user.email); // this should be id
+            socket.emit("addUser", user.email); 
         }
     }, [user, socket]);
 
@@ -30,7 +30,7 @@ const Layout = () => {
         <div className="min-h-screen">
         <Toaster />
         <Header />
-        <div>
+        <div className="px-20 pb-20">
         <Outlet />
         </div>
         </div>
