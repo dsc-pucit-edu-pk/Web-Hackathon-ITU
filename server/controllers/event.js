@@ -6,6 +6,7 @@ import { catchError } from "../utils/catchError.js";
 const createEvent = catchError(async (req, res) => {
   req.body.date = new Date(req.body.date);
   req.body.creatorId = req.userId;
+  console.log(req.userId)
   const event = await EventModel.create(req.body);
   res.status(201).json(event);
 });
@@ -13,41 +14,52 @@ const createEvent = catchError(async (req, res) => {
 // Read
 const getEvents = catchError(async (req, res) => {
   const searchQuery = req.query.q;
+  const category = req.query.category
+  const tags = req.query.tags
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 10;
   const skip = (page - 1) * limit;
 
   let query = {};
+  let events = null;
 
   if (searchQuery) {
     query = {
       $or: [
         { title: { $regex: searchQuery, $options: "i" } },
-        { description: { $regex: searchQuery, $options: "i" } }
-      ]
+        { description: { $regex: searchQuery, $options: "i" } },
+        { category: category},
+        { tags: tags},
+      ],
     };
   }
 
-  if (req.query.region && req.query.region) {
+  if (req.query && req.query.region) {
     query = {
       ...query,
-      address: { $regex: req.query.region, $options: "i" }
+      address: { $regex: req.query.region, $options: "i" },
     };
   }
 
+  console.log(query)
   try {
-    if (query === "") {
-      products = await Product.find({}).sort({createdAt: -1}).skip(skip).limit(limit);
-    }
-    else {
-      products = await Product.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
+    if (!query || query === "") {
+      events = await EventModel.find({status: 'active'})
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+    } else {
+      events = await EventModel.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
     }
 
-    const count = await Product.countDocuments(query);
+    const count = await EventModel.countDocuments(query);
     res.json({
-      products, 
+      events,
       totalPages: Math.ceil(count / limit),
-      currentPage: page
+      currentPage: page,
     });
   } catch (error) {
     console.log(error);
@@ -76,9 +88,10 @@ const updateEvent = catchError(async (req, res) => {
 const deleteEvent = catchError(async (req, res) => {
   const { id } = req.params;
   const event = await EventModel.findById(id);
-  if (evet && event.creatorId === req.userId) {
-    const event = await EventModel.findByIdAndDelete(id);
-    res.status(200).json(event);
+  console.log(event)
+  if (event && event.creatorId.toString() === req.userId) {
+    const _event = await EventModel.findByIdAndDelete(id);
+    res.status(200).json(_event);
     return;
   } else {
     res.send(403);
@@ -92,9 +105,7 @@ const queryEvents = catchError(async (req, res) => {
   const pipeline = [];
 
   if (query["tags"]) {
-    pipeline.push({
-      
-    });
+    pipeline.push({});
   }
   if (query.category) {
     pipeline.push({

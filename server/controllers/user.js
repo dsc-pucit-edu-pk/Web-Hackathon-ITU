@@ -7,77 +7,87 @@ dotenv.config();
 
 // Register
 export const register = async (req, res) => {
-    try {
-        const { name, email, password, role } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-        // Check if the user exists
-        const oldUser = await UserModel.findOne({ email });
+    // Check if the user exists
+    const oldUser = await UserModel.findOne({ email });
 
-        if (oldUser) {
-            return res.status(409).send("User already exists");
-        }
-
-        // Encrypt user password
-        const encryptedPassword = await bcrypt.hash(password, 10);
-
-        // Create new user
-        const user = await UserModel.create({
-            name,
-            email,
-            hashedPassword: encryptedPassword,
-            role,
-        });
-
-        // Create token
-        const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-        res.status(201).json({ user, token });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    if (oldUser) {
+      return res.status(409).send("User already exists");
     }
+
+    // Encrypt user password
+    const encryptedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const user = await UserModel.create({
+      name,
+      email,
+      hashedPassword: encryptedPassword,
+    });
+
+    // Create token
+    const token = jwt.sign(
+      { email: user.email, id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(201).json({ user, token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 // Login
 export const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        // Check if the user exists
-        const user = await UserModel.findOne({ email });
+    // Check if the user exists
+    const user = await UserModel.findOne({ email });
 
-        if (!user) {
-            return res.status(404).send("User doesn't exist");
-        }
-
-        // Validate password
-        const isPasswordCorrect = await bcrypt.compare(password, user.hashedPassword);
-
-        if (!isPasswordCorrect) {
-            return res.status(400).send("Invalid credentials");
-        }
-
-        // Create token
-        const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-        res.status(200).json({ user, token });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    if (!user) {
+      return res.status(404).send("User doesn't exist");
     }
+
+    // Validate password
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      user.hashedPassword
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(400).send("Invalid credentials");
+    }
+
+    // Create token
+    const token = jwt.sign(
+      { email: user.email, id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({ user, token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 export const getUser = async (req, res) => {
-    try {
-        const user = await UserModel.findById(req.userId);
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
+  try {
+    const user = await UserModel.findById(req.userId);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
 
 export const addWishlist = catchError(async (req, res) => {
-    const { id } = req.params;
-    const user = await UserModel.findById(req.userId);
-    user.wishlist.push(id);
-    await user.save();
-    res.status(200).json(user);
+  const { id } = req.params;
+  const user = await UserModel.findById(req.userId);
+  user.wishlist.push(id);
+  await user.save();
+  res.status(200).json(user);
 });
