@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true , unique: true},
     hashedPassword:{ type: String, required: true},
 
-    wishlist : [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
+    wishlist : [String],
 })
 
 const UserModel = mongoose.model("User", UserSchema);

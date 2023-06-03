@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import UserModel from "../models/User.js";
 import { catchError } from "../utils/catchError.js";
+import EventModel from "../models/Event.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -82,4 +83,48 @@ export const getUser = async (req, res) => {
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
-};
+
+export const addToWishlist = catchError(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await UserModel.findById(req.userId);
+    // checking if already in wishlist
+    if (user.wishlist.includes(id)) {
+      return res.status(200).json({ message: "Already in wishlist" });
+    }
+    user.wishlist.push(id);
+    await user.save();
+    res.status(200).json({ wishlist: user.wishlist, success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
+});
+
+export const removeFromWishlist = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await UserModel.findById(req.userId);
+    user.wishlist = user.wishlist.filter((item) => item !== id);
+    await user.save();
+    res.status(200).json({ wishlist:user.wishlist, success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
+}
+
+export const getWishlist = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.userId);
+    // checking if wishlist is empty
+    if (user.wishlist.length === 0) {
+      return res.status(200).json({ wishlist: [] });
+    }
+    const wishlist = await EventModel.find({ _id: { $in: user.wishlist } });
+    res.status(200).json(wishlist);
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false })
+  }
+}
