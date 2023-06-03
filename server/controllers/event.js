@@ -56,21 +56,18 @@ const getEvents = catchError(async (req, res) => {
       $or: [
         { title: { $regex: searchQuery, $options: "i" } },
         { description: { $regex: searchQuery, $options: "i" } },
-        { category: category },
-        { tags: tags },
       ],
     };
   }
 
-  if (req.query && req.query.region) {
+  if (req.query && req.query.region && req.query.region !== "Pakistan") {
     query = {
       ...query,
-      address: { $regex: req.query.region, $options: "i" },
+      location: { $regex: req.query.region, $options: "i" },
     };
   }
 
-  console.log(query);
-  try {
+try {
     if (!query || query === "") {
       events = await EventModel.find({ status: "active" })
         .sort({ createdAt: -1 })

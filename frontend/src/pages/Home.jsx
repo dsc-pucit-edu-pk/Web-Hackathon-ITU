@@ -13,11 +13,12 @@ import useLocationStore from "../store/useLocation"
 
 export default function Home({ setProgress }) {
 
-    const { setUser, setToken } = useAuthStore();
+    const { setUser, token, setToken } = useAuthStore();
     const [events, setevents] = useState([]);
     const [loading, setLoading] = useState(true);
     const { region, selectRegion } = useLocationStore();
 
+    console.log(token);
     useEffect(() => {
         handleLoginBack();
     }, []);
