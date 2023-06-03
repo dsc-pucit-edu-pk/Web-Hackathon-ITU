@@ -32,4 +32,4 @@ async function expireEvent() {
 }
 
 // Schedule the function to run every midnight
-cron.schedule('0 0 * * *', expireEvent);
+cron.schedule('* * * * *', expireEvent);
