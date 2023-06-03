@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.js";
 import eventRouter from "./routes/event.js";
+import notificationRouter from "./routes/notification.js";
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ db.on("disconnected", () => {
 // ROUTES
 app.use("/auth", userRouter);
 app.use("/event", eventRouter);
+app.use("/notification", notificationRouter);
 
 app.get("/", (req, res)=>{
   res.send("Server is running!");

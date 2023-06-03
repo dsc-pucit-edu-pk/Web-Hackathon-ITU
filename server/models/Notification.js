@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const UserSchema = new mongoose.Schema({
+const NotificationSchema = new mongoose.Schema({
     message: {
         type: String,
         required: true
@@ -22,5 +22,5 @@ const UserSchema = new mongoose.Schema({
     }
 })
 
-const UserModel = mongoose.model("User", UserSchema);
-export default UserModel;
+const NotificationModel = mongoose.model("Notification", NotificationSchema);
+export default NotificationModel;

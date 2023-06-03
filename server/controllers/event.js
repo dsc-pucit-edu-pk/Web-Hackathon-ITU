@@ -1,37 +1,49 @@
 import EventModel from "../models/Event.js";
 import { catchError } from "../utils/catchError.js";
+import mongoose from "mongoose";
 const createEvent = catchError(async (req, res) => {
   try {
-     const id = req.userId;
-     const {title, description, date, status, location, recurring, images, max_participants, current_participants, category, tags, participants } = req.body;
-     
-     console.log(title, description, date, status, location, recurring, images, max_participants, current_participants, category, tags, participants)
-     
-     const event = await EventModel.create({
+    const id = req.userId;
+    const {
       title,
-      description, 
-      date, 
+      description,
+      date,
       status,
       location,
-      creatorId:id,
-      recurring, 
-      images, 
+      recurring,
+      images,
+      max_participants,
+      current_participants,
+      category,
+      tags,
+      participants,
+    } = req.body;
+
+    const event = await EventModel.create({
+      title,
+      description,
+      date,
+      status,
+      location,
+      creatorId: mongoose.Types.ObjectId(id),
+      recurring,
+      images,
       max_participants,
       participants,
       category,
-      tags
-     }); 
-     res.json(event);
-    } catch (error) {
-      res.json(error);
+      tags,
+    });
+    res.json(event);
+  } catch (error) {
+    res.json(error);
   }
 });
 
 // Read
 const getEvents = catchError(async (req, res) => {
   const searchQuery = req.query.q;
-  const category = req.query.category
-  const tags = req.query.tags
+  const category = req.query.category;
+  const tags = req.query.tags;
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 10;
   const skip = (page - 1) * limit;
@@ -44,8 +56,8 @@ const getEvents = catchError(async (req, res) => {
       $or: [
         { title: { $regex: searchQuery, $options: "i" } },
         { description: { $regex: searchQuery, $options: "i" } },
-        { category: category},
-        { tags: tags},
+        { category: category },
+        { tags: tags },
       ],
     };
   }
@@ -57,10 +69,10 @@ const getEvents = catchError(async (req, res) => {
     };
   }
 
-  console.log(query)
+  console.log(query);
   try {
     if (!query || query === "") {
-      events = await EventModel.find({status: 'active'})
+      events = await EventModel.find({ status: "active" })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
@@ -104,7 +116,7 @@ const updateEvent = catchError(async (req, res) => {
 const deleteEvent = catchError(async (req, res) => {
   const { id } = req.params;
   const event = await EventModel.findById(id);
-  console.log(event)
+  console.log(event);
   if (event && event.creatorId.toString() === req.userId) {
     const _event = await EventModel.findByIdAndDelete(id);
     res.status(200).json(_event);
@@ -154,13 +166,13 @@ const addUserToEvent = catchError(async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
   const event = await EventModel.findById(id);
-  if(!event || event.status !== 'active') {
+  if (!event || event.status !== "active") {
     return res.status(404).send("Competition not found");
   }
 
   if (event.participants.includes(userId)) {
     return res.status(400).send("User already in event");
-  } else if(event.max_participants <= event.current_participants) {
+  } else if (event.max_participants <= event.current_participants) {
     event.participants.push(userId);
     event.current_participants += 1;
     await event.save();
