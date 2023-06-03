@@ -15,21 +15,22 @@ mongoose.connect(process.env.MONGO_URI, {
   console.log('Error connecting to MongoDB', err);
 });
 
-async function expireEvent() {
+async function recurEvent() {
   try {
     const currentDate = new Date();
-    const expiredEvents = await EventModel.find({ status: 'active', endDate: { $lte: currentDate }, recurring: false });
-    
+
+    const expiredEvents = await EventModel.find({ status: 'expired', endDate: { $lte: currentDate }, recurring: true });
+
     for (const event of expiredEvents) {
-      event.status = 'expired';
-      await event.save();
+        event.status = 'active';
+        event.startDate = new Date();
+        event.endDate = new Date();
+        event.endDate.setDate(event.endDate.getDate() + 7);
+        await event.save();
     }
-    
-    console.log(`${expiredEvents.length} event expired.`);
   } catch (error) {
-    console.error('Error expiring event:', error);
-  }
-}
+    console.error('Error recurring events:', error);
+}}
 
 // Schedule the function to run every midnight
-cron.schedule('* * * * *', expireEvent);
+cron.schedule('* * * * *', recurEvent);

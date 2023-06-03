@@ -62,11 +62,12 @@ export default function AdPage() {
       toast.error("Please login first!");
     }
       try {
-          const res = await axios.post(`${import.meta.env.VITE_BASE_URI}/event/join/${Event._id}`, {
+          const res = await axios.post(`${import.meta.env.VITE_BASE_URI}/event/join/${Event._id}`,{}, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
+          console.log(res);
       } catch (error) {
         toast.error("Cant join the event, please try again!");
       }
