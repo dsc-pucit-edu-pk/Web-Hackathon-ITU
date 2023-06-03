@@ -7,10 +7,8 @@ import { AiOutlineHeart } from "react-icons/ai";
 import {RiNotification4Line} from "react-icons/ri"
 import { Modal } from '@mui/material'
 import Notification from '../Notification/Notification'
-import { useWishlist } from '../../store/useWishlist'
 import { useState, useEffect } from 'react'
 import useAuthStore from '../../store/authStore'
-import { logout } from '../../hooks/auth'
 
 const AccountDrawer = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -20,7 +18,6 @@ const AccountDrawer = () => {
 
   const navigate = useNavigate();
   const [unread, setUnread] = useState(0);
-  const {clearWishlist} = useWishlist();
 
   // useEffect(() => {
   //   if (Notifications) {
@@ -74,20 +71,22 @@ const AccountDrawer = () => {
       setToken(null);
   }
 
+  console.log(user)
+
   return (
     <div className="h-16 flex items-center bg-white relative">
       {/* Avatar Image */}
       <div className="relative">
-        <Icon id={"icon"} text={user.displayName? user.displayName : user.email} image={user?.photoURL? user.photoURL : null} click={togglePopup}/>
+        <Icon id={"icon"} text={user.name? user.name : user.email} image={null} click={togglePopup}/>
         {unread > 0 && <div className="absolute top-0 right-0 bg-violet-600 rounded-full w-3 h-3" />}
         {showPopup && (
           <div className="absolute px-2 right-0 top-10 bg-white shadow-md rounded-lg  py-2 mt-4 min-w-[12rem] z-50">
-            {user.displayName && <div> 
-              <h4 className='mx-2 font-bold text-sm'>{user.displayName}</h4>
+            {user.name && <div> 
+              <h4 className='mx-2 font-bold text-sm'>{user.name}</h4>
               <p className='text-gray-800 text-sm mb-2 mx-2 font'>
               {user.email}
               </p> </div>}
-            {!user.displayName && user.email && <div>        
+            {!user.name && user.email && <div>        
               <p className='text-gray-800 text-sm mb-2 mx-2 font-bold'>
               {user.email}
             </p>
