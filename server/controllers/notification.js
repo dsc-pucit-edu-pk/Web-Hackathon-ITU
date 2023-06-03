@@ -6,7 +6,8 @@ import mongoose from "mongoose";
 export const getNotifications = async (req, res) => {
   const uid = req.userId;
   try {
-    const notifications = await Notification.find({ recipientId: uid }).sort({
+    console.log(uid)
+    const notifications = await Notification.find({ recipientId: mongoose.Types.ObjectId(uid) }).sort({
       createdAt: -1,
     });
     // here populating the notifications whose type is adAddedToWishlist with those products titles
