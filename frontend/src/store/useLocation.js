@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 
 const useLocationStore = create((set) => ({
-  region: null,
+  region: "Pakistan",
   selectRegion: (region) => set({ region }),
 }));
 

@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AccountDrawer from "../AccountDrawer/AccountDrawer"
 import {TfiFlickrAlt} from "react-icons/tfi"

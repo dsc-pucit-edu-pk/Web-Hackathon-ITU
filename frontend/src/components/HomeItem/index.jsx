@@ -39,9 +39,6 @@ const HomeItem = ({ event }) => {
                     <span className="text-[8px] md:block hidden ml-auto text-gray-500">{format(event.createdAt)}</span>
                 </div>
                 <h3 className="text-xs mt-1 text-gray-500">{event.location.length > 18 ? event.location.slice(0, 18) + "..." : event.location}</h3>
-                <div className="mt-1">
-                    <span className="text-sm font-semibold">PKR {event.price}</span>
-                </div>
             </div>
         </div>
     )
