@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.js";
 import eventRouter from "./routes/event.js";
+import verifyToken from "./middlewares/verifyToken.js";
 
 dotenv.config();
 
@@ -40,7 +41,7 @@ db.on("disconnected", () => {
 
 // ROUTES
 app.use("/user", userRouter);
-app.use("/event", eventRouter);
+app.use("/event", verifyToken, eventRouter);
 
 app.get("/", (req, res)=>{
   res.send("Server is running!");
