@@ -14,7 +14,7 @@ export default function AddEventForm() {
   const cloudinary_name = "dhybff9ez";
 
   //@ts-ignore //!Fix type error
-  async function uploadImages(event) {
+  async function uploadImages(e) {
     if (!cloudinary_preset) {
       throw new Error("Missing NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET");
     }
@@ -24,7 +24,7 @@ export default function AddEventForm() {
 
     const uploadPreset = cloudinary_preset;
     const cloudName = cloudinary_name;
-    const files = event.target.files;
+    const files = e.target.files;
     const _uploadPromises = [];
 
     for (let i = 0; i < files.length; i++) {
@@ -69,9 +69,7 @@ export default function AddEventForm() {
     }
 
     const images = data.map((i) => i.secure_url);
-    console.log(images);
     
-    // Save to db
     const event = {
       title: title.value,
       tags: tags.value.split(" "),
@@ -80,19 +78,24 @@ export default function AddEventForm() {
       status: "active",
       date: date.value,
       location,
-      max_participants,
+      max_participants: max_participants.value,
+      participants: [],
       recurring,
       images,
     };
-
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BASE_URI}/event`, event, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      })
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URI}/event`,
+        event,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(res)
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
 
     setLoading(false);
@@ -161,7 +164,13 @@ export default function AddEventForm() {
         </div>
 
         <label className="relative inline-flex items-center cursor-pointer">
-          <input id="recurring" type="checkbox" value={false} className="sr-only peer" onChange={() => setRecurring(() => !recurring)} />
+          <input
+            id="recurring"
+            type="checkbox"
+            value={false}
+            className="sr-only peer"
+            onChange={() => setRecurring(() => !recurring)}
+          />
           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
           <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
             Recurring
