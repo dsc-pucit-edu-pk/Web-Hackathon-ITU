@@ -4,7 +4,7 @@ const EventSchema = new Schema({
     title: { type: String, required: true, trim: true, minlength: 3 },
     description: { type: String },
     date : { type: Date, required: true },
-    status : { type: Boolean },
+    status : { type: String, required: true },
     location : { type: String, required: true },
     recurring : { type: Boolean, required: true },
     images : [{ type: String }],
