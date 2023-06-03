@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { RiMessage3Fill } from "react-icons/ri";
 import { useLocation } from "react-router-dom";
 import AccountDrawer from "../AccountDrawer/AccountDrawer"
 import {TfiFlickrAlt} from "react-icons/tfi"
@@ -60,26 +59,6 @@ export default function Header() {
               )}
 
               <div className="flex items-center gap-3">
-
-                {user ? (
-                  <Link
-                    to={"/messenger"}
-                    className="sm:flex hidden relative flex-col items-center"
-                  >
-                    {/* {notify && <div className="bg-red-500 rounded-full w-3 h-3 absolute right-0"></div>} */}
-                    <RiMessage3Fill size={30} className="text-gray-600" />
-                  </Link>
-                ) : (
-                  <div
-                    className="md:flex hidden flex-col items-center cursor-pointer"
-                    onClick={() => {
-                      navigate("/login");
-                    }}
-                  >
-                    <RiMessage3Fill size={30} className="text-gray-600" />
-                  </div>
-                )}
-
                 {user ? (
                   <div className="flex">
                     <AccountDrawer />

@@ -162,17 +162,22 @@ const queryEvents = catchError(async (req, res) => {
 const addUserToEvent = catchError(async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
-  const event = await EventModel.findById(id);
-  if (!event || event.status !== "active") {
-    return res.status(404).send("Competition not found");
+  if (!userId) {
+    res.status(400).json("No user found")
   }
-
+  const event = await EventModel.findById(id);
+  if (!event) {
+    return res.status(400).send("Competition not found");
+  }
+  
   if (event.participants.includes(userId)) {
-    return res.status(400).send("User already in event");
-  } else if (event.max_participants <= event.current_participants) {
+    res.status(400).send("User already in event");
+  } else if (event.max_participants >= event.current_participants) {
     event.participants.push(userId);
+    console.log(event.participants);
     event.current_participants += 1;
     await event.save();
+    res.json(event);
   } else {
     return res.status(400).send("Event is full");
   }

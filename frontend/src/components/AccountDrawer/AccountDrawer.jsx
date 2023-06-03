@@ -71,8 +71,6 @@ const AccountDrawer = () => {
       setToken(null);
   }
 
-  console.log(user)
-
   return (
     <div className="h-16 flex items-center bg-white relative">
       {/* Avatar Image */}

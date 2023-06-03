@@ -11,12 +11,14 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import useAuthStore from "../store/authStore";
 import AddressLink from "../components/AccountNav/AddressLink"
+import {toast} from "react-hot-toast";
 
 export default function AdPage() {
   const { id } = useParams();
   const [Event, setEvent] = useState(null);
   const [openLogin, setOpenLogin] = useState(false);
   const {user, token, addToWishlist, isLiked} = useAuthStore();
+  const [joined, setJoined] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const navigate = useNavigate();
 
@@ -38,6 +40,11 @@ export default function AdPage() {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URI}/event/${id}`);
       if (response.data) {
         setEvent(response.data);
+        if (user && response.data.participants.includes(user.id)) {
+          setJoined(true);
+        } else {
+          setJoined(false);
+        }
       } else {
         navigate('/404');
       }
@@ -49,6 +56,23 @@ export default function AdPage() {
   const handleWishlist = async (adId) => {
     await addToWishlist(adId, user, token);
   };
+
+  const handleOnJoin = async () => {
+    if (!user) {
+      toast.error("Please login first!");
+    }
+      try {
+          const res = await axios.post(`${import.meta.env.VITE_BASE_URI}/event/join/${Event._id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+      } catch (error) {
+        toast.error("Cant join the event, please try again!");
+      }
+  }
+
+  console.log(Event?.participants)
 
   return (
     <div className="pt-2 overflow-hidden" style={{ minHeight: "80vh" }}>
@@ -92,9 +116,8 @@ export default function AdPage() {
             <div className="my-4 md:hidden">
               <h3 className="text-xl">{Event.title}</h3>
               <AddressLink>{Event.location}</AddressLink>
-              <button onClick={() => {user ? setOpenReport(true) : setOpenLogin(true) }} className="text-xs items-center mt-2 h-fit text-primary bg-red-100 p-2 font-medium rounded-lg hover:bg-red-200">Report this ad</button>
             </div>
-            <ParticipationWidget event={Event} />
+            <ParticipationWidget joined={joined} Event={Event} onJoin={handleOnJoin} />
           </div>
 
           <div className="mt-3 mb-8 grid gap-8 grid-cols-1 lg:grid-cols-2 xl:grid-cols-[2fr_1fr]">
@@ -103,7 +126,6 @@ export default function AdPage() {
                 <h3 className="md:text-xl w-fit text-sm">{Event.title}</h3>
                 <div className="flex">
                 <AddressLink>{Event.location}</AddressLink>
-                <button onClick={() => {user ? setOpenReport(true) : setOpenLogin(true) }} className="text-xs items-center ml-auto h-fit text-primary bg-red-100 p-2 font-medium rounded-lg hover:bg-red-200">Report this ad</button>
                 </div>
               </div>
               <hr className="mt-8 mb-6" />
@@ -118,9 +140,6 @@ export default function AdPage() {
             <div>
             </div>
             <div>
-              <hr />
-              <br />
-              {/* <RelatedAds adId={place._id} adCategory={place.category} adSubCategory={place.subcategory} /> */}
             </div>
           </div>
         </motion.div>

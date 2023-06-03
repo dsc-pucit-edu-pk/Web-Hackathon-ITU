@@ -18,7 +18,6 @@ export default function Home({ setProgress }) {
     const [loading, setLoading] = useState(true);
     const { region, selectRegion } = useLocationStore();
 
-    console.log(token);
     useEffect(() => {
         handleLoginBack();
     }, []);
