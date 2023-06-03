@@ -40,11 +40,6 @@ export default function AdPage() {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URI}/event/${id}`);
       if (response.data) {
         setEvent(response.data);
-        if (user && response.data.participants.includes(user._id)) {
-          setJoined(true);
-        } else {
-          setJoined(false);
-        }
       } else {
         navigate('/404');
       }
@@ -52,6 +47,14 @@ export default function AdPage() {
       navigate('/404');
     }
   }
+
+  useEffect(()=>{
+    if (user && Event?.participants.includes(user._id)) {
+      setJoined(true);
+    } else {
+      setJoined(false);
+    }
+  }, [Event])
 
   const handleWishlist = async (adId) => {
     await addToWishlist(adId, user, token);
@@ -67,13 +70,11 @@ export default function AdPage() {
               Authorization: `Bearer ${token}`
             }
           });
-          console.log(res);
+          setJoined(true);
       } catch (error) {
         toast.error("Cant join the event, please try again!");
       }
   }
-
-  console.log(Event?.participants)
 
   return (
     <div className="pt-2 overflow-hidden" style={{ minHeight: "80vh" }}>

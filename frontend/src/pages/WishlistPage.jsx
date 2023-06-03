@@ -26,8 +26,12 @@ const WishlistPage = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-          console.log(res);
-          setAds(res.data);
+          if (res.data?.wishlist) {
+            setAds(res.data.wishlist);
+          }
+          else {
+            setAds(res.data);
+          }
           setLoading(false);
         }
         catch (err) {
