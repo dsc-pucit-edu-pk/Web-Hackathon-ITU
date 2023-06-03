@@ -3,8 +3,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import authRoutes from "./routes/authRoutes.js";
-import stripeRoutes from "./routes/stripeRoutes.js"
+import userRouter from "./routes/user.js";
+import eventRouter from "./routes/event.js";
 
 dotenv.config();
 
@@ -39,10 +39,8 @@ db.on("disconnected", () => {
 });
 
 // ROUTES
-app.use("/auth", authRoutes);
-
-
-//Setting up s3
+app.use("/user", userRouter);
+app.use("/event", eventRouter);
 
 app.get("/", (req, res)=>{
   res.send("Server is running!");

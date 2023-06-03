@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import AuthModel from "../models/Auth.js";
+import UserModel from "../models/User.js";
+import { catchError } from "../utils/catchError.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -10,7 +11,7 @@ export const register = async (req, res) => {
         const { name, email, password, role } = req.body;
 
         // Check if the user exists
-        const oldUser = await AuthModel.findOne({ email });
+        const oldUser = await UserModel.findOne({ email });
 
         if (oldUser) {
             return res.status(409).send("User already exists");
@@ -20,7 +21,7 @@ export const register = async (req, res) => {
         const encryptedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
-        const user = await AuthModel.create({
+        const user = await UserModel.create({
             name,
             email,
             hashedPassword: encryptedPassword,
@@ -42,7 +43,7 @@ export const login = async (req, res) => {
         const { email, password } = req.body;
 
         // Check if the user exists
-        const user = await AuthModel.findOne({ email });
+        const user = await UserModel.findOne({ email });
 
         if (!user) {
             return res.status(404).send("User doesn't exist");
@@ -64,13 +65,19 @@ export const login = async (req, res) => {
     }
 };
 
-
-
 export const getUser = async (req, res) => {
     try {
-        const user = await AuthModel.findById(req.userId);
+        const user = await UserModel.findById(req.userId);
         res.status(200).json(user);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
 };
+
+export const addWishlist = catchError(async (req, res) => {
+    const { id } = req.params;
+    const user = await UserModel.findById(req.userId);
+    user.wishlist.push(id);
+    await user.save();
+    res.status(200).json(user);
+});
