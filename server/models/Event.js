@@ -17,7 +17,7 @@ const EventSchema = new Schema({
   category: { type: String, required: true },
   tags: [{ type: String }],
 
-  participants: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+  participants: [{ type: Schema.Types.ObjectId, ref: "User" }],
 
   created_at: { type: Date, default: () => Date.now() },
   updated_at: { type: Date, default: () => Date.now() },

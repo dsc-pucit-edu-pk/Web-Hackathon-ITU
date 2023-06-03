@@ -3,23 +3,9 @@ import { catchError } from "../utils/catchError.js";
 import mongoose from "mongoose";
 const createEvent = catchError(async (req, res) => {
   try {
-    const id = req.userId;
-    const {
-      title,
-      description,
-      date,
-      status,
-      location,
-      recurring,
-      images,
-      max_participants,
-      current_participants,
-      category,
-      tags,
-      participants,
-    } = req.body;
-
-    const event = await EventModel.create({
+     const id = req.userId;
+     const {title, description, date, status, location, recurring, images, max_participants, current_participants, category, tags, participants } = req.body;
+     const event = await EventModel.create({
       title,
       description,
       date,
@@ -173,10 +159,12 @@ const addUserToEvent = catchError(async (req, res) => {
   if (event.participants.includes(userId)) {
     res.status(400).send("User already in event");
   } else if (event.max_participants >= event.current_participants) {
-    event.participants.push(userId);
-    console.log(event.participants);
-    event.current_participants += 1;
-    await event.save();
+    const event = await EventModel.findByIdAndUpdate(
+      id,
+      { $push: { participants: userId }, $inc: { current_participants: 1 } },
+      { new: true }
+    );
+    
     res.json(event);
   } else {
     return res.status(400).send("Event is full");
