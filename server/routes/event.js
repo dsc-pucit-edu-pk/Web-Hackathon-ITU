@@ -17,6 +17,6 @@ router.route("/:id")
 .put(verifyToken, updateEvent)
 .delete(verifyToken, deleteEvent);
 
-router.post("/join/:id",verifyToken, addUserToEvent);
+router.post("/join/:id", verifyToken, addUserToEvent);
 
 export default router;
