@@ -1,0 +1,20 @@
+{
+    "apps": [
+      {
+        "name": "Eventor",
+        "script": "index.js",
+        "watch": true,
+        "ignore_watch": ["node_modules", "jobs"],
+        "env": {
+          "NODE_ENV": "production"
+        }
+      },
+      {
+        "name": "Jobs",
+        "script": "./jobs/expire.js",
+        "env": {
+          "NODE_ENV": "production"
+        }
+      }
+    ]
+}
