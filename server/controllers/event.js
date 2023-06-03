@@ -4,6 +4,9 @@ const createEvent = catchError(async (req, res) => {
   try {
      const id = req.userId;
      const {title, description, date, status, location, recurring, images, max_participants, current_participants, category, tags, participants } = req.body;
+     
+     console.log(title, description, date, status, location, recurring, images, max_participants, current_participants, category, tags, participants)
+     
      const event = await EventModel.create({
       title,
       description, 
@@ -14,6 +17,7 @@ const createEvent = catchError(async (req, res) => {
       recurring, 
       images, 
       max_participants,
+      participants,
       category,
       tags
      }); 
