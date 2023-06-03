@@ -8,8 +8,9 @@ const EventSchema = new Schema({
   location: { type: String, required: true },
   recurring: { type: Boolean, required: true },
   images: [{ type: String }],
+
   max_participants: { type: Number, required: true },
-  current_participants: { type: Number, required: true },
+  current_participants: { type: Number, default: 0},
   
   creatorId: { type: Schema.Types.ObjectId, required: true },
 

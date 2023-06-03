@@ -1,10 +1,14 @@
 import { useState } from "react";
 import ImageUploader from "../components/ImageUploader";
+import Locator from "../components/Locator/Locator";
+import axios from "axios";
+import useAuthStore from "../store/authStore";
 
 export default function AddEventForm() {
   const [loading, setLoading] = useState(false);
   const [uploadPromises, setUploadPromises] = useState([]);
   const [recurring, setRecurring] = useState(false);
+  const { token } = useAuthStore();
 
   const cloudinary_preset = "sohaib-store";
   const cloudinary_name = "dhybff9ez";
@@ -42,15 +46,31 @@ export default function AddEventForm() {
     e.preventDefault();
     setLoading(true);
 
-    const { title, category, location, tags, description } =
+    const { title, category, date, tags, description, max_participants } =
       e.target.elements;
 
     // Upload images in parallel
     const responses = await Promise.all(uploadPromises);
-    const dataPromises = responses.map((response) => response.json());
-    const data = await Promise.all(dataPromises);
-    const images = data.map((i) => i.secure_url);
 
+    const dataPromises = responses.map(async (response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    });
+
+    let data;
+    try {
+      data = await Promise.all(dataPromises);
+    } catch (e) {
+      console.error("Failed to fetch data: ", e);
+      // Handle error accordingly
+      return;
+    }
+
+    const images = data.map((i) => i.secure_url);
+    console.log(images);
+    
     // Save to db
     const event = {
       title: title.value,
@@ -58,15 +78,27 @@ export default function AddEventForm() {
       category: category.value,
       description: description.value,
       status: "active",
-      location: location.value,
+      date: date.value,
+      location,
+      max_participants,
       recurring,
       images,
     };
-+
-    // const response = await eventAPI.postEvent(event);
+
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BASE_URI}/event`, event, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      })
+    } catch (error) {
+      console.log(error)
+    }
 
     setLoading(false);
   }
+
+  const [location, setLocation] = useState("");
 
   return (
     <form onSubmit={addProduct}>
@@ -125,13 +157,7 @@ export default function AddEventForm() {
           >
             Location
           </label>
-          <input
-            name="location"
-            id="location"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-            placeholder="Event location..."
-            required={true}
-          />
+          <Locator placeholder="e.g Lahore" selectRegion={setLocation} />
         </div>
 
         <label className="relative inline-flex items-center cursor-pointer">
@@ -142,20 +168,20 @@ export default function AddEventForm() {
           </span>
         </label>
 
-        {/* <div className="w-full">
+        <div className="w-full">
           <label
-            htmlFor="recurring"
+            htmlFor="date"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
-            Recurring
+            Date
           </label>
           <input
-            type="checkbox"
-            name="recurring"
-            id="recurring"
+            type="date"
+            name="date"
+            id="date"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
           />
-        </div> */}
+        </div>
         <div className="sm:col-span-2">
           <label
             htmlFor="description"
@@ -170,7 +196,20 @@ export default function AddEventForm() {
             placeholder="Your description goes here..."
           ></textarea>
         </div>
-
+        <div className="sm:col-span-2">
+          <label
+            htmlFor="max_participants"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            MAX Participants
+          </label>
+          <input
+            id="max_participants"
+            type="number"
+            className="block mb-8 p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+            placeholder="Enter max participants.."
+          />
+        </div>
         <div className="sm:col-span-2">
           <label
             htmlFor="tags"

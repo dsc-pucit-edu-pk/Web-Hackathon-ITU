@@ -44,7 +44,7 @@ export default function Header() {
               {user ? (
                 <Link
                   className="cursor-pointer whitespace-nowrap bg-violet-600 p-2 rounded-md text-white md:block hidden mb-2 sm:mb-0"
-                  to={"/account/ads/pick-a-category"}
+                  to={"/create"}
                 >
                   Create an Event
                 </Link>
