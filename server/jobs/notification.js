@@ -14,8 +14,8 @@ async function sendNotification({ message, recipientId, eventId }) {
     recipientId,
     eventId,
   };
-  console.log(notification);
-  return await NotificationModel.create(_notification);
+  const res = await NotificationModel.create(_notification);
+  return res
 }
 
 mongoose
@@ -39,20 +39,16 @@ async function notification() {
 
   const index = Math.floor(Math.random() * events.length);
 
+
   for (const event of events) {
     const users = await UserModel.find({ tags: event.tags[index] });
+
     for (const user of users) {
-
-        console.log(user)
-
       const recipientId = user._id;
-      const subject = "New Event";
       const message = `<p>A new event has been created that matches your interests. Check it out here: <a href="eventor.com/event/${event._id}">eventor.com/event/${event._id}</a></p>`;
+      
       await sendNotification({ eventId: event._id, recipientId, message });
     }
   }
 }
-
-notification();
-
-// cron.schedule("* * * * *", notification);
+cron.schedule("* * * * *", notification);

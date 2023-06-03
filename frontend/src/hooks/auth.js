@@ -7,8 +7,8 @@ export const login = async (email, password) => {
     return data;
 };
 
-export const register = async (name, email, password) => {
-    const { data } = await axios.post(`${import.meta.env.VITE_BASE_URI}/auth/register`, { name, email, password });
+export const register = async (name, email, password, tags) => {
+    const { data } = await axios.post(`${import.meta.env.VITE_BASE_URI}/auth/register`, { name, email, password, tags });
     console.log(data);
     localStorage.setItem("token", data.token);
     return data;
