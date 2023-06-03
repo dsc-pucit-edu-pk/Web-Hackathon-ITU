@@ -9,7 +9,7 @@ dotenv.config();
 // Register
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, tags } = req.body;
 
     // Check if the user exists
     const oldUser = await UserModel.findOne({ email });
@@ -26,6 +26,7 @@ export const register = async (req, res) => {
       name,
       email,
       hashedPassword: encryptedPassword,
+      tags
     });
 
     // Create token
