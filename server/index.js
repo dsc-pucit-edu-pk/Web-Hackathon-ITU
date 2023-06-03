@@ -41,7 +41,7 @@ db.on("disconnected", () => {
 
 // ROUTES
 app.use("/user", userRouter);
-app.use("/event", verifyToken, eventRouter);
+app.use("/event", eventRouter);
 
 app.get("/", (req, res)=>{
   res.send("Server is running!");
