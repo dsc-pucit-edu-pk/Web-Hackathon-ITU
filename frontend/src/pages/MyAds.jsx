@@ -80,7 +80,7 @@ export default function MyAds({ setProgress }) {
           places.map((place) => (
             <div
               key={place._id}
-              to={"/account/ads/" + place._id}
+              to={"/users" + place._id}
               onClick={() => navigate("/account/ads/" + place._id)}
               className="flex flex-col relative sm:flex-row my-4 cursor-pointer gap-4 bg-white hover:bg-gray-100 rounded-2xl border border-gray-300 p-4 "
             >
