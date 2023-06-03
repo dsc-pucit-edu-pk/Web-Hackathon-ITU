@@ -1,19 +1,26 @@
-import { query } from "express";
 import EventModel from "../models/Event.js";
 import { catchError } from "../utils/catchError.js";
-import makeImage from "../utils/makeImage.js";
-
-// Create
 const createEvent = catchError(async (req, res) => {
-  req.body.date = new Date(req.body.date);
-  req.body.creatorId = req.userId;
-
-  const post = await makeImage({
-    title: req.body.title,
-    description: req.body.description,
-  });
-  const event = await EventModel.create(req.body);
-  res.status(201).json(post);
+  try {
+     const id = req.userId;
+     const {title, description, date, status, location, recurring, images, max_participants, current_participants, category, tags, participants } = req.body;
+     const event = await EventModel.create({
+      title,
+      description, 
+      date, 
+      status,
+      location,
+      creatorId:id,
+      recurring, 
+      images, 
+      max_participants,
+      category,
+      tags
+     }); 
+     res.json(event);
+    } catch (error) {
+      res.json(error);
+  }
 });
 
 // Read

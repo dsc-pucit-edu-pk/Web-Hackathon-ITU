@@ -82,7 +82,7 @@ export const getUser = async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(404).json({ message: error.message });
-  }
+  }}
 
 export const addToWishlist = catchError(async (req, res) => {
   const { id } = req.params;
@@ -99,7 +99,7 @@ export const addToWishlist = catchError(async (req, res) => {
     console.log(error);
     res.json({ message: error.message, success: false });
   }
-});
+})
 
 export const removeFromWishlist = async (req, res) => {
   const { id } = req.params;
