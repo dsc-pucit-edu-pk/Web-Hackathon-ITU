@@ -10,6 +10,6 @@ router.post("/login", login);
 router.get("/user", verifyToken, getUser);
 router.post("/add/:id", verifyToken, addToWishlist);
 router.post("/remove/:id", verifyToken, removeFromWishlist);
-router.get("/wishlist", verifyToken, getUser, getWishlist);
+router.get("/wishlist", verifyToken, getWishlist);
 
 export default router;

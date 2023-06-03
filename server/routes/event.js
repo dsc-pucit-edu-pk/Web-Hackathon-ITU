@@ -1,4 +1,4 @@
-import { getEvent, getEvents, updateEvent, createEvent, deleteEvent, addUserToEvent } from "../controllers/event.js";
+import { getEvent, getEvents, updateEvent, createEvent, deleteEvent, addUserToEvent, getUserEvents } from "../controllers/event.js";
 
 import verifyToken from "../middlewares/verifyToken.js";
 import express from "express";
@@ -11,6 +11,8 @@ router.route("/")
 
 // router.route("/query")
 // .get(queryEvents);
+
+router.get("/myevents", verifyToken, getUserEvents);
 
 router.route("/:id")
 .get(getEvent)

@@ -28,8 +28,6 @@ const createEvent = catchError(async (req, res) => {
 // Read
 const getEvents = catchError(async (req, res) => {
   const searchQuery = req.query.q;
-  const category = req.query.category;
-  const tags = req.query.tags;
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 10;
   const skip = (page - 1) * limit;
@@ -42,6 +40,8 @@ const getEvents = catchError(async (req, res) => {
       $or: [
         { title: { $regex: searchQuery, $options: "i" } },
         { description: { $regex: searchQuery, $options: "i" } },
+        { category: { $regex: searchQuery, $options: "i" } },
+        { tags: { $regex: searchQuery, $options: "i" } }, 
       ],
     };
   }
@@ -111,7 +111,6 @@ const deleteEvent = catchError(async (req, res) => {
 
 // Query
 const queryEvents = catchError(async (req, res) => {
-  const _filters = ["title", "description", "category"];
   const query = req.body;
   const pipeline = [];
 
@@ -150,6 +149,7 @@ const addUserToEvent = catchError(async (req, res) => {
   const userId = req.userId;
   if (!userId) {
     res.status(400).json("No user found")
+    return;
   }
   const event = await EventModel.findById(id);
   if (!event) {
@@ -158,6 +158,7 @@ const addUserToEvent = catchError(async (req, res) => {
   
   if (event.participants.includes(userId)) {
     res.status(400).send("User already in event");
+    return;
   } else if (event.max_participants >= event.current_participants) {
     const event = await EventModel.findByIdAndUpdate(
       id,
@@ -171,8 +172,21 @@ const addUserToEvent = catchError(async (req, res) => {
   }
 });
 
+
+const getUserEvents = async(req, res)=>{
+  const userId = req.userId;
+  try {
+    const event = await EventModel.find({creatorId:userId})
+    res.status(200).json(event);
+  } catch (error) {
+    console.log(error);
+    res.json(error);
+  }
+}
+
 export {
   createEvent,
+  getUserEvents,
   getEvents,
   getEvent,
   updateEvent,

@@ -40,7 +40,7 @@ export default function AdPage() {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URI}/event/${id}`);
       if (response.data) {
         setEvent(response.data);
-        if (user && response.data.participants.includes(user.id)) {
+        if (user && response.data.participants.includes(user._id)) {
           setJoined(true);
         } else {
           setJoined(false);
@@ -62,7 +62,7 @@ export default function AdPage() {
       toast.error("Please login first!");
     }
       try {
-          const res = await axios.post(`${import.meta.env.VITE_BASE_URI}/event/join/${Event._id}`,{}, {
+          const res = await axios.post(`${import.meta.env.VITE_BASE_URI}/event/join/${Event._id}`, {},{
             headers: {
               Authorization: `Bearer ${token}`
             }

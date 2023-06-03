@@ -21,7 +21,7 @@ const Register = () => {
     }
     try {
       setLoading(true);
-      const { user, token } = await register(name, email, password, tags);
+      const { user, token } = await register(name, email, password, userTags);
       setUser(user);
       setToken(token);
       setLoading(false);

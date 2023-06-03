@@ -1,6 +1,3 @@
-import useAuthStore from "../store/authStore";
-import { loginBack } from "../hooks/auth";
-import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
@@ -13,29 +10,9 @@ import useLocationStore from "../store/useLocation"
 
 export default function Home({ setProgress }) {
 
-    const { setUser, token, setToken } = useAuthStore();
     const [events, setevents] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { region, selectRegion } = useLocationStore();
-
-    useEffect(() => {
-        handleLoginBack();
-    }, []);
-
-    const handleLoginBack = async () => {
-        try {
-            const res = await loginBack();
-            if (!res) {
-                return;
-            }
-            setUser(res?.user);
-            if (res?.token) {
-                setToken(res.token);
-            }
-        } catch (error) {
-            toast.error(error.message);
-        }
-    }
+    const { region, selectRegion } = useLocationStore();  
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);

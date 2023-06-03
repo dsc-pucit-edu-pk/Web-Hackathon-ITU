@@ -7,6 +7,8 @@ import { useState } from 'react';
 import LoadingBar from 'react-top-loading-bar';
 import AddEventForm from './pages/AddEventForm';
 import AdPage from './pages/AdPage';
+import WishlistPage from './pages/WishlistPage';
+import MyAds from './pages/MyAds';
 
 const App = () => {
 
@@ -25,6 +27,8 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path='/create' element={<AddEventForm />} />
         <Route path='/item/:id' element={<AdPage />} />
+        <Route path='/wishlist' element={<WishlistPage />} />
+        <Route path='/myevents' element={<MyAds />} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Route>
     </Routes>

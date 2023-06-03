@@ -91,13 +91,6 @@ const AccountDrawer = () => {
             </div>
             }
             <hr className='mb-2' />
-            <Link
-              to="/account"
-              className="flex items-center gap-2 px-3 text-sm py-2 rounded-lg hover:bg-gray-200"
-            >
-              <FiUser size={17} className='text-violet-500'/>
-              Profile
-            </Link>
             <button
                 // onClick={()=>{setShowPopup(false); setOpen(true); handleMarkAllRead()}}
                 onClick={()=>{setShowPopup(false); setOpen(true);}}
@@ -115,7 +108,7 @@ const AccountDrawer = () => {
                 Wishlist
             </Link>
             <Link
-                to="/account/myads"
+                to="/myevents"
                 className="flex items-center gap-2 px-3 text-sm py-2 rounded-lg hover:bg-gray-200"
                 >
                 <FiUpload size={17} className='text-violet-500'/>
